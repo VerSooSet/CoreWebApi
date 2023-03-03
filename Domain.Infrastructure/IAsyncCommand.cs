@@ -1,7 +1,7 @@
-﻿namespace Transcactions
+﻿namespace Command.Abstractions
 {
     public interface IAsyncCommand<in TCommandContext> where TCommandContext: ICommandContext
     {
-        Task ExecuteAsync(ICommandContext context, CancellationToken token);
+        Task ExecuteAsync(TCommandContext context, CancellationToken token);
     }
 }

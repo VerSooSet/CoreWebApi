@@ -7,9 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Database.N\Database.N.csproj" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="7.0.0" />
+    <PackageReference Include="NBuilder" Version="6.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Domain.Abstractions\Domain.Abstractions.csproj" />
-    <ProjectReference Include="..\Domain.Infrastructure\Command.Abstractions.csproj" />
   </ItemGroup>
 
 </Project>

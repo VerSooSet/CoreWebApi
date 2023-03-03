@@ -7,9 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Database.N\Database.N.csproj" />
-    <ProjectReference Include="..\Domain.Abstractions\Domain.Abstractions.csproj" />
+    <ProjectReference Include="..\DatabaseTransactions\Database.Transactions.csproj" />
     <ProjectReference Include="..\Domain.Infrastructure\Command.Abstractions.csproj" />
+    <ProjectReference Include="..\Domain\Domain.csproj" />
   </ItemGroup>
 
 </Project>

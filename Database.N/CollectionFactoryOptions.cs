@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain.Abstractions
+namespace Database.N
 {
-    public interface IDomainService
+    public class CollectionFactoryOptions
     {
+        public string ConnectionString { get; set; }
     }
 }

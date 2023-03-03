@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Transcactions
+namespace Command.Abstractions
 {
     public interface ICommandContext
     {
