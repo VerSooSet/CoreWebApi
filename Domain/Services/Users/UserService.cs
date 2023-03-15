@@ -4,7 +4,7 @@ using Domain.Entitiyes;
 
 namespace Domain.Services.Users
 {
-    internal class UserService : UserServiceBase,IUserService
+    public class UserService : UserServiceBase,IUserService
     {
         public UserService(IAsyncCommandBuilder asyncCommandBuilder,IDBService service)
             : base(asyncCommandBuilder,service)

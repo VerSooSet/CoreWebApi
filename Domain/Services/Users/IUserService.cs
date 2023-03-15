@@ -8,7 +8,7 @@ namespace Domain.Services.Users
         Task<User> CreateUserAsync(string Name,
             string Password,
             long CityId,
-            CancellationToken cancellationToken
+            CancellationToken cancellationToken = default
         );
 
     }

@@ -1,15 +1,16 @@
-﻿using System.Data.Common;
+﻿using Database.Abstraction;
+using System.Data.Common;
 
 
 namespace Database.N
 {
-    public class CollectionProvider : IDBProvider,IDisposable
+    public class DbTransactionProvider : IDbCurrentTransactionProvider, IDisposable
     {
         private bool _disposed;
         private DbConnection _connection;
         private DbTransaction _transaction;
         private readonly IDbConnectionFactory _connectionFactory;
-        public CollectionProvider(IDbConnectionFactory factory)
+        public DbTransactionProvider(IDbConnectionFactory factory)
         {
             _connectionFactory = factory;
         }
@@ -17,7 +18,7 @@ namespace Database.N
         public async Task<DbTransaction> GetCurrentTransactionAsync(CancellationToken cancellationToken = default)
         {
             if (_disposed)
-                throw new ObjectDisposedException(nameof(CollectionProvider));
+                throw new ObjectDisposedException(nameof(DbTransactionProvider));
             if (_transaction != null)
                 return _transaction;
 
@@ -48,7 +49,7 @@ namespace Database.N
 
         #endregion
 
-        ~CollectionProvider() => Dispose(false);
+        ~DbTransactionProvider() => Dispose(false);
 
     }
 }

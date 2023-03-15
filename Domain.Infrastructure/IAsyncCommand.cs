@@ -2,6 +2,6 @@
 {
     public interface IAsyncCommand<in TCommandContext> where TCommandContext: ICommandContext
     {
-        Task ExecuteAsync(TCommandContext context, CancellationToken token);
+        Task ExecuteAsync(TCommandContext context, CancellationToken cancellationToken = default);
     }
 }

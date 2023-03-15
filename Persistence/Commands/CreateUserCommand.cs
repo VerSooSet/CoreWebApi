@@ -8,9 +8,9 @@ namespace Persistence.Commands
 {
     public class CreateUserCommand : IAsyncCommand<CreateUserCommandContext>
     {
-        private readonly IDBProvider dbProvider;
+        private readonly IDbCurrentTransactionProvider dbProvider;
         
-        public CreateUserCommand(IDBProvider provider)
+        public CreateUserCommand(IDbCurrentTransactionProvider provider)
         {
             dbProvider = provider;
         }    

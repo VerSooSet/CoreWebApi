@@ -2,7 +2,7 @@
 
 namespace Database.N
 {
-    public interface IDBProvider
+    public interface IDbCurrentTransactionProvider
     {
         Task<DbTransaction> GetCurrentTransactionAsync(CancellationToken cancellationToken = default);
     }

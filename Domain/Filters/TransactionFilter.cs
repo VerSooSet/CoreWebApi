@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Database.N
+namespace Domain.Filters
 {
-    public class CollectionFactoryOptions
+    //будем завершать транзакцию
+    public class TransactionFilter
     {
-        public string ConnectionString { get; set; }
     }
 }
