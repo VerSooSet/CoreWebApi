@@ -1,88 +1,93 @@
-using Command.Abstractions;
+using ApplicationLayer;
+using ApplicationLayer.DI;
+using ApplicationLayer.Swagger;
 using Database.N;
-using Domain.Abstractions;
-using Domain.Commands.Contexts;
+using Domain.DI;
+using Domain.Entitiyes;
+using Domain.Filters;
+using Domain.Initializers;
+using Domain.Services;
 using Domain.Services.Users;
-using FizzWare.NBuilder;
 using Persistence.Commands;
-using System.Collections.Concurrent;
+using Persistence.Queries;
+
 
 var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+void ConfigureServices(WebApplicationBuilder builder)
 {
-    app.UseSwagger();
-    app.UseSwaggerUI(options => {
-        options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
-        options.RoutePrefix = string.Empty;
+    string connectionString = builder.Configuration.GetConnectionString("SQLConnectionString");
+    DatabaseInitializer.Init(connectionString);
+
+    builder.Services.AddScoped<TransactionFilter>();
+    builder.Services.AddSingleton<IDBService, DBService>();
+
+    builder.Services.AddDatabase<MSSQLConnectionFactory, DbTransactionProvider>();
+    builder.Services.AddCommandsFromAssembly<CreateUserCommand>();
+
+    builder.Services.AddQueriesFromAssembly<FindUsersQuery>();
+    builder.Services.AddQueriesFromAssembly<FindUserCountByLoginQuery>();
+    builder.Services.AddQueriesFromAssembly<FindUserByIdQuery>();
+    builder.Services.AddQueriesFromAssembly<FindUserByLoginQuery>();
+
+    builder.Services.AddDomainServicesFromAssembly<UserServiceBase>();
+
+    builder.Services.Configure<MSSQLConnectionFactoryOptions>(options =>
+    {
+        options.ConnectionString = connectionString;
     });
 }
+ConfigureServices(builder);
+
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwagger();
+
+//!REF
+builder.Services.AddControllersWithViews(mvcOptions =>
+{
+    mvcOptions.Filters.AddService<TransactionFilter>();
+});
+
+var app = builder.Build();
+// must be the first middleware, to ensure exceptions at all levels are handled
+app.UseMiddleware<ExceptionHandlingMiddleware>();
+
+app = SwaggerExtensions.UseSwagger(app);
 
 app.UseHttpsRedirection();
 
-/*var summaries = new[]
+app.MapGet("/createuser", async (IUserService service, string name, string password, long cityId, CancellationToken cancellationToken) =>
 {
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+    await service.CreateUserAsync(name, password, cityId, cancellationToken);
+    Console.WriteLine(String.Format("{0}, try to creating User with {1}, {2}, {3}",DateTime.Now.ToShortTimeString(),name,password,cityId));
+});
 
-app.MapGet("/weatherforecast", () =>
+app.MapGet("/deluser", async (IUserService service, string name, long id, CancellationToken cancellationToken) =>
 {
-    var forecast = Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateTime.Now.AddDays(index),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");*/
+    await service.DeleteUserAsync(name,id, cancellationToken);
+    Console.WriteLine(String.Format("{0}, try to deleting User with {1}, {2}", DateTime.Now.ToShortTimeString(), id, name));
+});
 
-
-var testData = new ConcurrentDictionary<long, IEntity>();
-
-//var options = builder.Services.AddOptions<MSSQLConnectionFactoryOptions>();
-
-app.MapGet("/createuser", async (string name, string password, long cityId, CancellationToken cancellationToken) =>
+app.MapGet("/getuser", async (IUserService service, string name, long id, CancellationToken cancellationToken) =>
 {
-    //new Options<MSSQLConnectionFactoryOptions>();
-    var provider = new DbTransactionProvider(new MSSQLConnectionFactory(""));
-    IAsyncCommand<ICommandContext> command = (IAsyncCommand<ICommandContext>)new CreateUserCommand(provider);
-    var builder = new DefaultAsyncCommandBuilder(command);
+    await service.GetUserAsync(id, cancellationToken);
+    Console.WriteLine(String.Format("{0}, answer for requesting User by {1}, {2}", DateTime.Now.ToShortTimeString(), id, name));
+});
+
+app.Map("/getuser", async (IUserService service, string name, long id, CancellationToken cancellationToken) =>
+{
+    await service.GetUserAsync(id, cancellationToken);
+    Console.WriteLine(String.Format("{0}, answer for requesting User by {1}, {2}", DateTime.Now.ToShortTimeString(), id, name));
+});
+
+app.MapGet("/getusers", async (IUserService service, CancellationToken cancellationToken) =>
+{
+    var elements = await service.GetUserCollectionAsync(cancellationToken) ?? new List<User>();
     
-    var dbService = new DBService(testData, 8);
-    IUserService service = new UserService(builder, dbService);
-    var user = service.CreateUserAsync(name,password,cityId,cancellationToken);
-    Console.WriteLine(user);
-}
-);
-/*
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast = Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateTime.Now.AddDays(index),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
-*/
-app.Run();
+    Console.WriteLine(
+        String.Format("receiving collection an {0} of {1} elements", DateTime.Now.ToShortTimeString(), elements.Count)
+    );
+    foreach (var each in elements)
+        Console.WriteLine(String.Format("Founded a User with {1}, {2}", each.Id, each.Name));
+});
 
-internal record WeatherForecast(DateTime Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
+app.Run();

@@ -1,44 +1,54 @@
 ﻿using Domain.Abstractions;
+using System.Collections;
 using System.Collections.Concurrent;
 
 namespace Database.N
 {
     public class DBService : IDBService
     {
-        private readonly int maxElementsValue;
-
-        //private IEntity[] entityes { get; }
-        private ConcurrentDictionary<long,IEntity> entityes { get; }
-        public DBService(ConcurrentDictionary<long,IEntity> entityes, int maxElementsValue) 
+        private readonly int maxElementsValue; 
+        private ConcurrentDictionary<long,IEntity> entityes { get; set; }
+        
+        [Obsolete]
+        public DBService()
         {
-            this.entityes = entityes;
-            this.maxElementsValue = maxElementsValue;
+            if (entityes == null)
+            {
+                entityes = new ConcurrentDictionary<long, IEntity>();
+                maxElementsValue = 5;
+            }
         }
-        public async Task<IEntity> GetAsync<IEntity>(long id, CancellationToken cancellationToken = default)
+        
+        public async Task<Domain.Abstractions.IEntity> GetAsync<TEntity>(long id, CancellationToken cancellationToken = default) where TEntity: IEntity, new()
         {
-            //return (IEntity) await Task.FromResult(entityes.Single(x => x.Id == id));
-            Domain.Abstractions.IEntity value;
+            Domain.Abstractions.IEntity value = null;
             bool keyExists = entityes.TryGetValue(id, out value);
             if (!keyExists)
                 await Task.FromException(new KeyNotFoundException(nameof(entityes)));
-            return (IEntity)await Task.FromResult(value);
+            if (value is not TEntity)
+                await Task.FromException(new KeyNotFoundException(nameof(TEntity)));
+            
+            return await Task.FromResult(value);
         }
 
-        public async Task<ICollection<IEntity>>GetAsync<IEntity>(CancellationToken cancellationToken = default)
+        public async Task<ICollection<TEntity>>GetCollectionAsync<TEntity>(CancellationToken cancellationToken = default) where TEntity : IEntity, new()
         {
-            //return await Task.FromResult(Array.FindAll(entityes, x => x != null).ToList()) as ICollection<IEntity>;
-            return await Task.FromResult(entityes.Values) as ICollection<IEntity>;
+            var collection = await Task.FromResult(
+                ((entityes.Values) as IEnumerable)
+                    .OfType<TEntity>()
+                    .Cast<TEntity>()
+                    .ToList()
+            );
+            return collection;
         }
 
         public async Task<long> AddAsync<IEntity>(Domain.Abstractions.IEntity entity, CancellationToken cancellationToken = default)
         {
-            /*if (entityes.Any(x => x != null))
-            {
-                int pos = Array.FindIndex(entityes, x => x == null);
-                entityes[pos] = (Domain.Abstractions.IEntity)entity;
-            }*/
-            int newElementId = entityes.Count;
-            while (newElementId< maxElementsValue)//(entityes.Count>0)
+            if (entityes == null)
+                throw new ArgumentNullException(nameof(entityes));
+
+            int newElementId = entityes.Count + 1;
+            if (newElementId < maxElementsValue)
             {
                 entityes.TryAdd(newElementId, entity);
                 return await Task.FromResult(newElementId);
@@ -47,31 +57,41 @@ namespace Database.N
             return 0;
         }
 
-        public async Task UpdateAsync(Domain.Abstractions.IEntity entity, CancellationToken cancellationToken = default)
+        public async Task DeleteAsync<IEntity>(Domain.Abstractions.IEntity entity, CancellationToken cancellationToken = default)
         {
-            var element = await GetAsync<IEntity>(entity.Id);
+            if (entityes == null)
+                throw new ArgumentNullException(nameof(entityes));
+            
+            entityes.TryRemove(entity.Id, out entity);
+            await Task.CompletedTask;
+        }
+
+        public async Task UpdateAsync<TEntity>(Domain.Abstractions.IEntity entity, CancellationToken cancellationToken = default) where TEntity: IEntity, new()
+        {
+            var element = await GetAsync<TEntity>(entity.Id, cancellationToken);
             if (element == null)
             {
                 await Task.FromException(new ArgumentNullException());
                 return;
             }
-            /*int pos = Array.FindIndex(entityes, x => x.Id == entity.Id);
-            entityes[pos] = entity;*/
             entityes.AddOrUpdate(entity.Id,entity,(key,oldvalue) => oldvalue=entity);
             await Task.CompletedTask;
         }
-
-
-        /*public async Task<IEntity> FindAsync<IEntity>(Type userType, string Name, CancellationToken cancellationToken = default)
+        public async Task<IEntity> FindAsync<THasName>(string name, CancellationToken cancellationToken = default) where THasName: IHasName
         {
-            if (nameof(userType) == "User")
+            IEntity value = null;
+
+            var filtered = entityes
+                .Where(x => x.Value.GetType() == typeof(THasName))
+                .Select(x => x.Value)
+                .Cast<THasName>()
+                .ToList();
+            if (filtered.Count() > 0 && filtered.Any(x => x.Name == name))
             {
-                var list = entityes.Cast<User>();
-                if (entityes.Any(x => x.Value. == Name))
-                {
-                    return (IEntity)await Task.FromResult(entityes.Single(x => x.Name == id));
-                }
+                value = await Task.FromResult(
+                    filtered.First(x => x.Name == name)) as IEntity;
             }
-        }*/
+            return value;
+        }
     }
 }

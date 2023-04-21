@@ -1,8 +1,7 @@
 ﻿using Command.Abstractions;
 using Database.N;
 using Domain.Commands.Contexts;
-using Domain.Entitiyes;
-using System.Data.Common;
+
 
 namespace Persistence.Commands
 {
@@ -20,7 +19,7 @@ namespace Persistence.Commands
             CancellationToken cancellationToken = default)
         {
 
-            #region FAKEd for deal with real db instead of Collections elements 
+            #region example of work with real db instead of collection 
             /*
                 DbTransaction transaction = await dbProvider.GetCurrentTransactionAsync(cancellationToken);
                 DbConnection connection = transaction.Connection;
@@ -30,9 +29,9 @@ namespace Persistence.Commands
                 command.Parameters.AddWithValue("CityId", commandContext.User.City);
                 long result = (long)await command.ExecuteScalarAsync();
                 commandContext.User.Id = result;
-                */
+            */
             #endregion
-
+            Console.WriteLine("Sended command create one User");
             await Task.CompletedTask;
         }
     }

@@ -2,13 +2,13 @@
 
 namespace Domain.Entitiyes
 {
-    public class Content : IEntity
+    public class Content : IEntity, IHasName
     {
         public long Id { get; set; }
         public string Name { get; set; }
         public User Owner { get; init; }
         public long TypeId { get; init; }
-        public DateTime datetimeUTC { get; init; }
+        public DateTime DatetimeUTC { get; init; }
 
         protected internal Content(string Name, User Owner, long TypeId)
         {
@@ -21,7 +21,7 @@ namespace Domain.Entitiyes
             this.Name = Name;
             this.Owner = Owner;
             this.TypeId = TypeId;
-            this.datetimeUTC = DateTime.UtcNow;
+            this.DatetimeUTC = DateTime.UtcNow;
         }
 
         [Obsolete("for an common type", true)]//для получения сущности из хранилища

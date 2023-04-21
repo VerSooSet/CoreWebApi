@@ -1,9 +1,8 @@
 ﻿using Database.Abstraction;
-using Database.N;
 using System.Data.Common;
 
 
-namespace Database.Transactions
+namespace Database.N
 {
     public class DbTransactionProvider : IDbCurrentTransactionProvider, IDisposable
     {
@@ -11,6 +10,14 @@ namespace Database.Transactions
         private DbConnection _connection;
         private DbTransaction _transaction;
         private readonly IDbConnectionFactory _connectionFactory;
+
+        bool IDbCurrentTransactionProvider.IsInitialized => throw new NotImplementedException();
+
+        /// <summary>Проверим существование транзакции</summary>
+        public bool IsInitialized() => !_disposed && _transaction != null;
+        //{
+        //    return !_disposed && _transaction != null;
+        //}
         public DbTransactionProvider(IDbConnectionFactory factory)
         {
             _connectionFactory = factory;
@@ -20,13 +27,12 @@ namespace Database.Transactions
         {
             if (_disposed)
                 throw new ObjectDisposedException(nameof(DbTransactionProvider));
-            
             if (_transaction != null)
                 return _transaction;
-                        
+
+            
             _connection = await _connectionFactory.CreateConnectionAsync(cancellationToken);
             _transaction = await _connection.BeginTransactionAsync(System.Data.IsolationLevel.ReadCommitted, cancellationToken);
-            
             return _transaction;
         }
 

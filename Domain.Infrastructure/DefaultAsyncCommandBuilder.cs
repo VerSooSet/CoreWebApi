@@ -2,10 +2,10 @@
 {
     public class DefaultAsyncCommandBuilder : IAsyncCommandBuilder
     {
-        private readonly IAsyncCommand<ICommandContext> _asyncCommand;
-        public DefaultAsyncCommandBuilder(IAsyncCommand<ICommandContext> command)
+        private readonly IAsyncCommandFactory _asyncCommandFactory;
+        public DefaultAsyncCommandBuilder(IAsyncCommandFactory factory)
         {
-            _asyncCommand = command ?? throw new ArgumentNullException(nameof(command));
+            _asyncCommandFactory = factory ?? throw new ArgumentNullException(nameof(factory));
         }
 
         public Task DeleteAsync<TCommandContext>(
@@ -13,7 +13,7 @@
             CancellationToken cancellationToken) 
             where TCommandContext : ICommandContext
         {
-            return _asyncCommand.ExecuteAsync(context, cancellationToken);
+            return _asyncCommandFactory.Create<TCommandContext>().ExecuteAsync(context, cancellationToken);
         }
 
         public Task ExecuteAsync<TCommandContext>(
@@ -21,7 +21,7 @@
             CancellationToken cancellationToken=default) 
             where TCommandContext : ICommandContext
         {
-            return _asyncCommand.ExecuteAsync(context, cancellationToken);
+            return _asyncCommandFactory.Create<TCommandContext>().ExecuteAsync(context, cancellationToken);
         }
 
         public Task UpdateAsync<TCommandContext>(
@@ -29,7 +29,7 @@
             CancellationToken cancellationToken) 
             where TCommandContext : ICommandContext
         {
-            return _asyncCommand.ExecuteAsync(context, cancellationToken);
+            return _asyncCommandFactory.Create<TCommandContext>().ExecuteAsync(context, cancellationToken);
         }
     }
 }
