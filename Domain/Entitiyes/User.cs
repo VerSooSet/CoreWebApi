@@ -21,6 +21,10 @@ namespace Domain.Entitiyes
             [MemberNotNull(nameof(Password))]
             set
             {
+                if (value == null) { 
+                    Password = String.Empty;
+                    return;
+                }
                 if (value.Length > maxPasswordLength)
                     throw new ArgumentOutOfRangeException(nameof(value));
             }

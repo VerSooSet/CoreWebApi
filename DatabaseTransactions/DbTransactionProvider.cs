@@ -11,13 +11,8 @@ namespace Database.N
         private DbTransaction _transaction;
         private readonly IDbConnectionFactory _connectionFactory;
 
-        bool IDbCurrentTransactionProvider.IsInitialized => throw new NotImplementedException();
-
         /// <summary>Проверим существование транзакции</summary>
-        public bool IsInitialized() => !_disposed && _transaction != null;
-        //{
-        //    return !_disposed && _transaction != null;
-        //}
+        bool IDbCurrentTransactionProvider.IsInitialized => !_disposed && _transaction != null;
         public DbTransactionProvider(IDbConnectionFactory factory)
         {
             _connectionFactory = factory;

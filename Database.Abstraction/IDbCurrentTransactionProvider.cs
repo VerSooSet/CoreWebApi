@@ -5,6 +5,6 @@ namespace Database.N
     public interface IDbCurrentTransactionProvider
     {
         Task<DbTransaction> GetCurrentTransactionAsync(CancellationToken cancellationToken = default);
-        public bool IsInitialized { get; }
+        bool IsInitialized { get; }
     }
 }

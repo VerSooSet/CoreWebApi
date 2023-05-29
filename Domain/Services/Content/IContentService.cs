@@ -10,24 +10,12 @@ namespace Domain.Services.Content
             long TypeId,
             CancellationToken cancellationToken = default
         );
-
-        Task<Domain.Entitiyes.Content> DeleteContentAsync(long Id,
-            CancellationToken cancellationToken = default
-        );
-
-        Task<Domain.Entitiyes.Content> FindContentAsync(string Name,
-            CancellationToken cancellationToken = default
-        );
-
         Task<Domain.Entitiyes.Content> GetContentAsync(long Id,
             CancellationToken cancellationToken = default
         );
 
-        Task<Domain.Entitiyes.Content> UpdateContentAsync(long Id, 
-            string Name, 
-            long TypeId,
-            CancellationToken cancellationToken = default
-        );
+        Task<ICollection<Domain.Entitiyes.Content>> GetContentCollectionAsync(string stringSearch,
+           CancellationToken cancellationToken = default);
 
     }
 }

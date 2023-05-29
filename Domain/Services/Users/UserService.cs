@@ -1,5 +1,6 @@
 ﻿using Command.Abstractions;
 using Database.N;
+using Domain.Abstractions;
 using Domain.Entitiyes;
 using Queries.Abstractions;
 
@@ -7,7 +8,7 @@ namespace Domain.Services.Users
 {
     public class UserService : UserServiceBase,IUserService
     {
-        public UserService(IAsyncCommandBuilder asyncCommandBuilder,IAsyncQueryBuilder asyncQueryBuilder, IDBService service)
+        public UserService(IAsyncCommandBuilder asyncCommandBuilder,IAsyncQueryBuilder asyncQueryBuilder, IDBServiceWithSearch service)
             : base(asyncCommandBuilder, asyncQueryBuilder, service)
         {
         }
@@ -15,13 +16,6 @@ namespace Domain.Services.Users
         {
             var user = new User(Name,Password,CityId);
             user.Id = await CreateUserAsync<User>(user,cancellationToken);
-            return user;
-        }
-
-        public async Task<User> DeleteUserAsync(string Name, long Id, CancellationToken cancellationToken = default)
-        {
-            User user = await FindUserAsync(Name, cancellationToken, Id);
-            await DeleteUserAsync<User>(user, cancellationToken);
             return user;
         }
 
@@ -37,9 +31,9 @@ namespace Domain.Services.Users
         {
             return await base.GetUserAsync<User>(Id, cancellationToken);
         }
-        public async Task<ICollection<User>> GetUserCollectionAsync(CancellationToken cancellationToken = default)
+        public async Task<ICollection<User>> GetUserCollectionAsync(string searchString, CancellationToken cancellationToken = default)
         {
-            return await base.GetUserCollectionAsync<User>(cancellationToken);
+            return await base.GetUserCollectionAsync<User>(searchString,cancellationToken);
         }
 
         public Task<User> UpdateUserAsync(long Id, string Name, long CityId, CancellationToken cancellationToken = default)

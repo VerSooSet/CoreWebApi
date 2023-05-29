@@ -26,7 +26,12 @@ namespace Persistence.Queries
                 Login = criteria.Login,
             }, transaction);
             */
-            Console.WriteLine("Ask database find User by Id");
+            Console.WriteLine(
+                String.Format(
+                    "[{0}] Ask database find User by Id",
+                    DateTime.Now.ToShortTimeString()
+                )
+            );
 
             return await Task.FromResult<User>(null);
         }

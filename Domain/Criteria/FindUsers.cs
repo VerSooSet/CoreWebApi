@@ -7,7 +7,5 @@ using System.Threading.Tasks;
 
 namespace Domain.Criteria
 {
-    public class FindUsers: ICriterion
-    {
-    }
+    public record FindUsers(string Search) : ICriterion;
 }

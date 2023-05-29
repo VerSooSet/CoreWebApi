@@ -31,7 +31,12 @@ namespace Persistence.Commands
                 commandContext.User.Id = result;
             */
             #endregion
-            Console.WriteLine("Sended command create one User");
+            Console.WriteLine(
+                String.Format(
+                    "[{0}] Sended command create one User", 
+                    DateTime.Now.ToShortTimeString()
+                )
+            );
             await Task.CompletedTask;
         }
     }

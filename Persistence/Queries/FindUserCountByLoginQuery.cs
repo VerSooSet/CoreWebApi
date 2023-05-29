@@ -1,6 +1,4 @@
-﻿
-
-using Database.N;
+﻿using Database.N;
 using Domain.Criteria;
 using Queries.Abstractions;
 
@@ -26,7 +24,12 @@ namespace Persistence.Queries
                 Login = criteria.Login,
             }, transaction);
             */
-            Console.WriteLine("Ask database for Users counts");
+            Console.WriteLine(
+                String.Format(
+                    "[{0}] Ask database for Users counts",
+                    DateTime.Now.ToShortTimeString()
+                )
+            );
 
             return await Task.FromResult<int>(0);
         }

@@ -19,7 +19,12 @@ namespace Persistence.Queries
             /*DbTransaction transaction = await dbTransactionProvider.GetCurrentTransactionAsync(cancellationToken);
             System.Data.Common.DbConnection connection = transaction.Connection;
             */
-            Console.WriteLine("Ask db for taking list of all Users");
+            Console.WriteLine(
+                String.Format(
+                    "[{0}] Ask db for taking list of all Users",
+                    DateTime.Now.ToShortTimeString()
+                )
+            );
             return await Task.FromResult<List<User>>(new List<User>());
         }
     }

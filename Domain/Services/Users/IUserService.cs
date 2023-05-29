@@ -11,11 +11,6 @@ namespace Domain.Services.Users
             CancellationToken cancellationToken = default
         );
 
-        Task<User> DeleteUserAsync(string Name,
-            long Id,
-            CancellationToken cancellationToken = default
-        );
-
         Task<User> FindUserAsync(string Name,
             CancellationToken cancellationToken = default,
             long Id = default
@@ -24,12 +19,7 @@ namespace Domain.Services.Users
         Task<User> GetUserAsync(long Id,
             CancellationToken cancellationToken = default
         );
-
-        Task<User> UpdateUserAsync(long Id, string Name, long CityId,
-            CancellationToken cancellationToken = default
-        );
-
-        Task<ICollection<User>> GetUserCollectionAsync(
+        Task<ICollection<User>> GetUserCollectionAsync(string searchString,
             CancellationToken cancellationToken = default);
     }
 }

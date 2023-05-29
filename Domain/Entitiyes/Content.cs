@@ -10,17 +10,17 @@ namespace Domain.Entitiyes
         public long TypeId { get; init; }
         public DateTime DatetimeUTC { get; init; }
 
-        protected internal Content(string Name, User Owner, long TypeId)
+        protected internal Content(string name, User owner, long typeId)
         {
-            if (string.IsNullOrWhiteSpace(Name))
-                throw new ArgumentException(String.Format("Val cannot be null or whitespace. {0}: {1}", nameof(Name), Name));
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentException(String.Format("Val cannot be null or whitespace. {0}: {1}", nameof(name), name));
 
-            if (Owner == null)
-                throw new ArgumentNullException(nameof(Owner));
+            if (owner == null)
+                throw new ArgumentNullException(nameof(owner));
 
-            this.Name = Name;
-            this.Owner = Owner;
-            this.TypeId = TypeId;
+            this.Name = name;
+            this.Owner = owner;
+            this.TypeId = typeId;
             this.DatetimeUTC = DateTime.UtcNow;
         }
 

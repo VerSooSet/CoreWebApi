@@ -1,4 +1,6 @@
-﻿namespace ApplicationLayer.Swagger
+﻿using System.Reflection;
+
+namespace ApplicationLayer.Swagger
 {
     public static class SwaggerExtensions
     {

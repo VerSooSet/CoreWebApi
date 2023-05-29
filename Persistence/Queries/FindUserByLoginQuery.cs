@@ -14,6 +14,7 @@ namespace Persistence.Queries
             this.dbTransactionProvider = _dbTransactionProvider ?? throw new ArgumentNullException(nameof(_dbTransactionProvider));
         }
 
+
         public async Task<User> AskAsync(FindUserByLogin criteria, CancellationToken cancellationToken = default)
         {
             /*DbTransaction transaction = await dbTransactionProvider.GetCurrentTransactionAsync(cancellationToken);
@@ -25,7 +26,12 @@ namespace Persistence.Queries
                 Login = criteria.Login,
             }, transaction);
             */
-            Console.WriteLine("Ask database find User by Login");
+            Console.WriteLine(
+                String.Format(
+                    "[{0}] Ask database find User by Login",
+                    DateTime.Now.ToShortTimeString()
+                )
+            );
 
             return await Task.FromResult<User>(null);
         }

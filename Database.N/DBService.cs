@@ -1,87 +1,115 @@
 ﻿using Domain.Abstractions;
 using System.Collections;
 using System.Collections.Concurrent;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Database.N
 {
-    public class DBService : IDBService
+    public class DBService : IDBServiceWithSearch
     {
         private readonly int maxElementsValue; 
-        private ConcurrentDictionary<long,IEntity> entityes { get; set; }
+        private ConcurrentDictionary<long,IEntity> entityesDictionary { get; set; }
         
         [Obsolete]
         public DBService()
         {
-            if (entityes == null)
+            if (entityesDictionary == null)
             {
-                entityes = new ConcurrentDictionary<long, IEntity>();
+                entityesDictionary = new ConcurrentDictionary<long, IEntity>();
                 maxElementsValue = 5;
             }
         }
-        
-        public async Task<Domain.Abstractions.IEntity> GetAsync<TEntity>(long id, CancellationToken cancellationToken = default) where TEntity: IEntity, new()
+
+        [return: MaybeNull]
+        public async Task<Domain.Abstractions.IEntity?> GetAsync<TEntity>(long id, CancellationToken cancellationToken = default) where TEntity: IEntity, new()
         {
-            Domain.Abstractions.IEntity value = null;
-            bool keyExists = entityes.TryGetValue(id, out value);
-            if (!keyExists)
-                await Task.FromException(new KeyNotFoundException(nameof(entityes)));
-            if (value is not TEntity)
-                await Task.FromException(new KeyNotFoundException(nameof(TEntity)));
+            var correctTypeEntityes = entityesDictionary.Values.OfType<TEntity>();
             
-            return await Task.FromResult(value);
+            if (correctTypeEntityes.Count() == 0)
+               return await Task.FromResult<Domain.Abstractions.IEntity?>(null);
+
+            if (
+                (from element in correctTypeEntityes
+                 where element.Id == id
+                 select element)
+                 .Any()
+                 )
+            {}
+            else {
+                Console.WriteLine(String.Format("[{0}] {1} not found by Id",
+                       DateTime.Now.ToShortTimeString(),
+                       typeof(TEntity).Name
+                 ));
+            }
+            var value = correctTypeEntityes.FirstOrDefault(x => x.Id == id);
+            return await Task.FromResult<Domain.Abstractions.IEntity?>(value);
         }
 
-        public async Task<ICollection<TEntity>>GetCollectionAsync<TEntity>(CancellationToken cancellationToken = default) where TEntity : IEntity, new()
+        public async Task<ICollection<TEntity>>GetCollectionAsync<TEntity>(string? searchString, CancellationToken cancellationToken = default) where TEntity : IEntity,IHasName, new()
         {
-            var collection = await Task.FromResult(
-                ((entityes.Values) as IEnumerable)
+            var correctTypeEntityes = await Task.FromResult(
+                ((entityesDictionary.Values) as IEnumerable)
                     .OfType<TEntity>()
-                    .Cast<TEntity>()
                     .ToList()
             );
-            return collection;
+            if (searchString != null
+                && typeof(TEntity).GetInterfaces().Contains(typeof(IHasName)))
+            {
+                var filtered = correctTypeEntityes.Where(x => 
+                                                    x.Name == searchString)
+                                            .ToList();
+                return filtered;
+            }
+            return correctTypeEntityes;
         }
 
-        public async Task<long> AddAsync<IEntity>(Domain.Abstractions.IEntity entity, CancellationToken cancellationToken = default)
+        public async Task<long> AddAsync<IEntity>([NotNull]Domain.Abstractions.IEntity entity, CancellationToken cancellationToken = default)
         {
-            if (entityes == null)
-                throw new ArgumentNullException(nameof(entityes));
+            if (entityesDictionary == null)
+                throw new NullReferenceException(nameof(entityesDictionary));
 
-            int newElementId = entityes.Count + 1;
+            int newElementId = entityesDictionary.Count + 1;
             if (newElementId < maxElementsValue)
             {
-                entityes.TryAdd(newElementId, entity);
+                entityesDictionary.TryAdd(newElementId, entity);
                 return await Task.FromResult(newElementId);
             }
-            await Task.FromException(new Exception(nameof(maxElementsValue)));
+            await Task.FromException(new ArgumentOutOfRangeException(nameof(maxElementsValue)));
             return 0;
         }
 
-        public async Task DeleteAsync<IEntity>(Domain.Abstractions.IEntity entity, CancellationToken cancellationToken = default)
+        public async Task DeleteAsync<IEntity>([NotNull] Domain.Abstractions.IEntity entity, CancellationToken cancellationToken = default)
         {
-            if (entityes == null)
-                throw new ArgumentNullException(nameof(entityes));
-            
-            entityes.TryRemove(entity.Id, out entity);
+            if (entityesDictionary == null)
+                throw new NullReferenceException(nameof(entityesDictionary));
+            Domain.Abstractions.IEntity? tempValue = null;
+
+            entityesDictionary.TryRemove(entity.Id,out tempValue);
             await Task.CompletedTask;
         }
 
         public async Task UpdateAsync<TEntity>(Domain.Abstractions.IEntity entity, CancellationToken cancellationToken = default) where TEntity: IEntity, new()
         {
-            var element = await GetAsync<TEntity>(entity.Id, cancellationToken);
+            IEntity? element = await GetAsync<TEntity>(entity.Id, cancellationToken)!;
             if (element == null)
             {
-                await Task.FromException(new ArgumentNullException());
+                Console.WriteLine(String.Format("[{0}] {1} not found by Id = {2}",
+                      DateTime.Now.ToShortTimeString(),
+                      typeof(TEntity).Name,
+                      entity.Id
+                ));
+                await Task.FromException(new NullReferenceException(nameof(element)));
                 return;
             }
-            entityes.AddOrUpdate(entity.Id,entity,(key,oldvalue) => oldvalue=entity);
+            entityesDictionary.AddOrUpdate(entity.Id,entity,(key,oldvalue) => oldvalue=entity);
             await Task.CompletedTask;
         }
-        public async Task<IEntity> FindAsync<THasName>(string name, CancellationToken cancellationToken = default) where THasName: IHasName
+        [return: MaybeNull]
+        public async Task<IEntity?> FindAsync<THasName>(string name, CancellationToken cancellationToken = default) where THasName: IHasName
         {
-            IEntity value = null;
+            IEntity? value = null;
 
-            var filtered = entityes
+            var filtered = entityesDictionary
                 .Where(x => x.Value.GetType() == typeof(THasName))
                 .Select(x => x.Value)
                 .Cast<THasName>()
