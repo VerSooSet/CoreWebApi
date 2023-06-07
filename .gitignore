@@ -361,3 +361,7 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/ApplicationLayer/docker-compose.yml
+/ApplicationLayer/Dockerfile
+/.dockerignore
+/ApplicationLayer/Dockerfile~RF84f3270.TMP
