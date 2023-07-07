@@ -1,6 +1,4 @@
-﻿using System.Reflection;
-
-namespace ApplicationLayer.Swagger
+﻿namespace ApplicationLayer.Swagger
 {
     public static class SwaggerExtensions
     {
@@ -8,8 +6,8 @@ namespace ApplicationLayer.Swagger
         {
             if (services == null)
                 throw new ArgumentNullException(nameof(services));
-            
-            services.AddSwaggerGen(c=>
+
+            services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
                 {
@@ -24,20 +22,20 @@ namespace ApplicationLayer.Swagger
                     },
                     License = new Microsoft.OpenApi.Models.OpenApiLicense
                     {
-                        Name = "",
-                        Url = new Uri("https://versoo.bibucket.org"),
+                        Name = "under BSD 2 license",
+                        Url = new Uri("https://bitbucket.org/versoo/corewebapi/src/master/LICENSE.txt"),
                     }
-                }); 
+                });
             }
             );
             return services;
         }
 
         public static WebApplication UseSwagger(WebApplication app)
-        { 
+        {
             if (app == null)
                 throw new ArgumentNullException(nameof(app));
-            
+
             app.UseSwagger();
             app.UseSwaggerUI(options => {
                 options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
