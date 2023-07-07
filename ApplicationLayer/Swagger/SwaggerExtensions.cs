@@ -24,8 +24,8 @@ namespace ApplicationLayer.Swagger
                     },
                     License = new Microsoft.OpenApi.Models.OpenApiLicense
                     {
-                        Name = "",
-                        Url = new Uri("https://versoo.bibucket.org"),
+                        Name = "under BSD 2 license",
+                        Url = new Uri("https://bitbucket.org/versoo/corewebapi/src/master/LICENSE.txt"),
                     }
                 }); 
             }
