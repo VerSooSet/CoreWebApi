@@ -8,7 +8,7 @@ namespace Database.N
     public class DBService : IDBServiceWithSearch
     {
         private readonly int maxElementsValue; 
-        private ConcurrentDictionary<long,IEntity> entityesDictionary { get; set; }
+        private ConcurrentDictionary<long, IEntity> entityesDictionary { get; set; }
         
         [Obsolete]
         public DBService()
@@ -21,27 +21,21 @@ namespace Database.N
         }
 
         [return: MaybeNull]
-        public async Task<Domain.Abstractions.IEntity?> GetAsync<TEntity>(long id, CancellationToken cancellationToken = default) where TEntity: IEntity, new()
+        public async Task<IEntity?> GetAsync<TEntity>(long id, CancellationToken cancellationToken = default) where TEntity: IEntity, new()
         {
-            var correctTypeEntityes = entityesDictionary.Values.OfType<TEntity>();
+            IEnumerable<TEntity> entityes = entityesDictionary.Values.OfType<TEntity>();
             
-            if (correctTypeEntityes.Count() == 0)
+            if (entityes.Count() == 0)
                return await Task.FromResult<Domain.Abstractions.IEntity?>(null);
 
-            if (
-                (from element in correctTypeEntityes
-                 where element.Id == id
-                 select element)
-                 .Any()
-                 )
-            {}
-            else {
+            var value = entityes.FirstOrDefault(x => x.Id == id);
+            if (value == null)
+            {
                 Console.WriteLine(String.Format("[{0}] {1} not found by Id",
-                       DateTime.Now.ToShortTimeString(),
-                       typeof(TEntity).Name
-                 ));
+                           DateTime.Now.ToShortTimeString(),
+                           typeof(TEntity).Name
+                ));
             }
-            var value = correctTypeEntityes.FirstOrDefault(x => x.Id == id);
             return await Task.FromResult<Domain.Abstractions.IEntity?>(value);
         }
 

@@ -30,8 +30,8 @@ void ConfigureServices(WebApplicationBuilder builder)
     builder.Services.AddScoped<IAsyncRequestBuilder,DefaultAsyncRequestBuilder>();
 
     builder.Services.AddScoped(typeof(IAsyncRequestHandlerFactory),typeof(ApplicationLayer.DI.Factories.AsyncRequestHandlerFactory));
-    
-    //!REF to another IoC container
+
+    //!REF to another IoC container coz this - is a quick fix, Microsoft Dependency Injection container hasn't register generic-types dependencies nicer than this
     builder.Services.AddScoped(typeof(IAsyncRequestHandler<UserAddRequest, UserAddResponse>), typeof(UserAddRequestHandler));
     builder.Services.AddScoped(typeof(IAsyncRequestHandler<UserGetRequest,UserGetResponse>), typeof(UserGetRequestHandler));
     builder.Services.AddScoped(typeof(IAsyncRequestHandler<UserGetListRequest, UserGetListResponse>), typeof(UserGetListRequestHandler));
