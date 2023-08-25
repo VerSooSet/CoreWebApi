@@ -365,3 +365,5 @@ FodyWeavers.xsd
 /ApplicationLayer/Dockerfile
 /.dockerignore
 /ApplicationLayer/Dockerfile~RF84f3270.TMP
+/.idea/.idea.CoreWebApi/.idea/.gitignore
+/.idea/.idea.CoreWebApi/.idea
