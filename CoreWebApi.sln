@@ -24,7 +24,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Persistence", "Persistence\
 		{A90432F7-D913-4C34-A3B8-280E97800621} = {A90432F7-D913-4C34-A3B8-280E97800621}
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Database.N", "Database.N\Database.N.csproj", "{278D8795-1F16-43B3-A3C8-BFC5090155D2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Database.Fake", "Database.N\Database.Fake.csproj", "{278D8795-1F16-43B3-A3C8-BFC5090155D2}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Database.Transactions", "DatabaseTransactions\Database.Transactions.csproj", "{7064F2B8-1720-44C8-A147-2EC5D419F805}"
 EndProject
@@ -36,7 +36,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Api.Requests.Abstractions",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNetCore.ApiController.Abstractions", "AspNetCore.APIController.Abstractions\AspNetCore.ApiController.Abstractions.csproj", "{824FDE13-08EF-4740-80C7-F5905E7C3FDB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNetCore.ApiController.Extensions", "AspNetCore.ApiController.Extensions\AspNetCore.ApiController.Extensions.csproj", "{019D2B0C-05AB-4EDF-B9AB-F9E3872F6B96}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNetCore.ApiController.Extensions", "AspNetCore.ApiController.Extensions\AspNetCore.ApiController.Extensions.csproj", "{019D2B0C-05AB-4EDF-B9AB-F9E3872F6B96}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

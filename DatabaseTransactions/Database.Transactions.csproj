@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Database.Abstraction\Database.Abstraction.csproj" />
-    <ProjectReference Include="..\Database.N\Database.N.csproj" />
+    <ProjectReference Include="..\Database.N\Database.Fake.csproj" />
   </ItemGroup>
 
 </Project>

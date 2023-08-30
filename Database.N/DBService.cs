@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Database.N
+namespace Database.Fake
 {
     public class DBService : IDBServiceWithSearch
     {

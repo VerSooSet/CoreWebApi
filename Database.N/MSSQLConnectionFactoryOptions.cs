@@ -1,4 +1,4 @@
-﻿namespace Database.N
+﻿namespace Database.Fake
 {
     public class MSSQLConnectionFactoryOptions
     {

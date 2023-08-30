@@ -21,6 +21,7 @@
     <ProjectReference Include="..\Api.Abstractions\Api.Requests.Abstractions.csproj" />
     <ProjectReference Include="..\AspNetCore.APIController.Abstractions\AspNetCore.ApiController.Abstractions.csproj" />
     <ProjectReference Include="..\AspNetCore.ApiController.Extensions\AspNetCore.ApiController.Extensions.csproj" />
+    <ProjectReference Include="..\Database.N\Database.Fake.csproj" />
     <ProjectReference Include="..\DatabaseTransactions\Database.Transactions.csproj" />
     <ProjectReference Include="..\Domain\Domain.csproj" />
     <ProjectReference Include="..\Persistence\Persistence.csproj" />

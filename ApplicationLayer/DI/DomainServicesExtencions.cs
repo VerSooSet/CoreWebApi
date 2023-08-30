@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace Domain.DI
 {
-    public static class DomainServicesExtencions
+    public static class DomainServicesExtensions
     {
         public static IServiceCollection AddDomainServicesFromAssembly<T>(this IServiceCollection serviceCollection)
         {

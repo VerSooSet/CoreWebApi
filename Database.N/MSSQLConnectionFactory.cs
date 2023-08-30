@@ -3,7 +3,7 @@ using System.Data.SqlClient;
 using Database.Abstraction;
 using Microsoft.Extensions.Options;
 
-namespace Database.N
+namespace Database.Fake
 {
     /// <summary>Создание соединения, открытие его и возвращение экземпляра.</summary>
     public class MSSQLConnectionFactory : IDbConnectionFactory
